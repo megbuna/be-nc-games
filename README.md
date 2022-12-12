@@ -1,4 +1,4 @@
-How to create the environment variables
+How to create the environment variables:
 
 You will need to create two .env files for this project: .env.test and .env.development.
 
