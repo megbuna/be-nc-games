@@ -32,7 +32,6 @@ describe('GET incorrect path',()=>{
         .get('/apz')
         .expect(404)
         .then(({body})=>{
-            console.log(body)
         expect(body).toEqual({msg: 'path not found!'});
         });
     });
