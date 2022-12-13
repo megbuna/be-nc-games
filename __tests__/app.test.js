@@ -36,3 +36,27 @@ describe('GET incorrect path',()=>{
         });
     });
 });
+
+describe('GET /api/reviews', () => {
+    test('200: responds with an array of review objects, each of which should have the required properties', () => {
+        return request(app)
+        .get('/api/reviews').expect(200)
+        .then((response) => {
+            const {reviews} = response.body;
+        reviews.forEach((review) => {
+        expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(String),
+        });
+        });
+        expect(reviews).toBeSortedBy('created_at', {descending: true});
+    });
+    });
+});
