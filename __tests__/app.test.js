@@ -1,4 +1,4 @@
-const app = require('../app.js')
+const app = require('../app.js');
 const request = require ('supertest');
 const db = require ('../db/connection');
 const seed = require ('../db/seeds/seed');
@@ -26,7 +26,7 @@ describe('GET /api/categories', () => {
     });
 });
 
-describe('GET incorrect path',()=>{
+describe('GET incorrect api path',()=>{
     test('404: non-existent route', ()=>{
         return request(app)
         .get('/apz')
@@ -60,3 +60,46 @@ describe('GET /api/reviews', () => {
     });
     });
 });
+
+describe('GET /api/reviews/:review_id', () => {
+    test('200: responds with a review object, which should have the required properties', () => {
+        const reviewId = 1
+        return request(app)
+        .get(`/api/reviews/${reviewId}`)
+        .expect(200)
+        .then((response) => {
+        const {review} = response.body;
+        expect(review).toMatchObject({
+            title: 'Agricola',
+            designer: 'Uwe Rosenberg',
+            owner: 'mallionaire',
+            review_img_url:
+            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+            review_body: 'Farmyard fun!',
+            category: 'euro game',
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 1
+        });
+    });
+    });
+    test('400: invalid review_id', () => {
+        const reviewId = 'z'
+        return request(app)
+        .get(`/api/reviews/${reviewId}`)
+        .expect(400)
+        .then(({body})=>{
+        expect(body).toEqual({msg: 'path not found!'});
+        });
+    });
+    });
+
+    describe('GET incorrect review path',()=>{
+        test('404: non-existent route', ()=>{
+            return request(app)
+            .get('/api/reviews/66777')
+            .expect(404)
+            .then(({body}) => {
+            expect(body).toEqual({msg: 'Not Found'});
+            });
+        });
+    });
