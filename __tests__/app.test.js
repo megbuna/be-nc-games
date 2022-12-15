@@ -87,14 +87,11 @@ describe('GET /api/reviews/:review_id', () => {
         return request(app)
         .get(`/api/reviews/${reviewId}`)
         .expect(400)
-        .then(({body})=>{
+        .then(({body}) => {
         expect(body).toEqual({msg: 'path not found!'});
         });
     });
-    });
-
-    describe('GET incorrect review path',()=>{
-        test('404: non-existent route', ()=>{
+        test('404: non-existent route', () =>{
             return request(app)
             .get('/api/reviews/66777')
             .expect(404)
@@ -103,3 +100,30 @@ describe('GET /api/reviews/:review_id', () => {
             });
         });
     });
+
+    describe('GET /api/users', () => {
+        test('200: responds with an array of category objects, each of which should have the appropriate properties', () => {
+            return request(app)
+            .get('/api/users').expect(200)
+            .then((response) => {
+                const {users} = response.body;
+            users.forEach((user) => {
+            expect(user).toMatchObject({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+            });
+            });
+        });
+        });
+        test('404: non-existent route', ()=>{
+            return request(app)
+            .get('/apz')
+            .expect(404)
+            .then(({body})=>{
+            expect(body).toEqual({msg: 'path not found!'});
+            });
+        });
+
+    });
+
