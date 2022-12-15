@@ -26,7 +26,7 @@ describe('GET /api/categories', () => {
     });
 });
 
-describe('GET incorrect path',()=>{
+describe('GET incorrect api path',()=>{
     test('404: non-existent route', ()=>{
         return request(app)
         .get('/apz')
@@ -68,9 +68,7 @@ describe('GET /api/reviews/:review_id', () => {
         .get(`/api/reviews/${reviewId}`)
         .expect(200)
         .then((response) => {
-        console.log(response,'70')
         const {review} = response.body;
-        console.log(review,71)
         expect(review).toMatchObject({
             title: 'Agricola',
             designer: 'Uwe Rosenberg',
@@ -86,12 +84,22 @@ describe('GET /api/reviews/:review_id', () => {
     });
     test('400: invalid review_id', () => {
         const reviewId = 'z'
-        request(app)
-        
+        return request(app)
         .get(`/api/reviews/${reviewId}`)
         .expect(400)
         .then(({body})=>{
         expect(body).toEqual({msg: 'path not found!'});
         });
     });
+    });
+
+    describe('GET incorrect review path',()=>{
+        test('404: non-existent route', ()=>{
+            return request(app)
+            .get('/api/reviews/66777')
+            .expect(404)
+            .then(({body}) => {
+            expect(body).toEqual({msg: 'Not Found'});
+            });
+        });
     });
