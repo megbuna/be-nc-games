@@ -10,6 +10,17 @@ if (db.end) db.end();
 
 beforeEach(() => seed(testData));
 
+describe('GET incorrect api path',()=>{
+    test('404: non-existent route', ()=>{
+        return request(app)
+        .get('/apz')
+        .expect(404)
+        .then(({body})=>{
+        expect(body).toEqual({msg: 'path not found!'});
+        });
+    });
+});
+
 describe('GET /api/categories', () => {
     test('200: responds with an array of category objects, each of which should have the properties slug and description', () => {
         return request(app)
@@ -23,17 +34,6 @@ describe('GET /api/categories', () => {
         });
         });
     });
-    });
-});
-
-describe('GET incorrect api path',()=>{
-    test('404: non-existent route', ()=>{
-        return request(app)
-        .get('/apz')
-        .expect(404)
-        .then(({body})=>{
-        expect(body).toEqual({msg: 'path not found!'});
-        });
     });
 });
 
@@ -116,14 +116,78 @@ describe('GET /api/reviews/:review_id', () => {
             });
         });
         });
-        test('404: non-existent route', ()=>{
-            return request(app)
-            .get('/apz')
-            .expect(404)
-            .then(({body})=>{
-            expect(body).toEqual({msg: 'path not found!'});
-            });
-        });
-
     });
 
+    describe('POST /api/reviews/:review_id/comments',() => {
+        test('201: responds with comments newly added to the database', () => {
+            const comment1 = {
+                username: 'mallionaire',
+                body: 'Loving it!'
+            };
+            const reviewId = 2
+            return request(app)
+            .post(`/api/reviews/${reviewId}/comments`)
+            .send(comment1)
+            .expect(201)
+            .then((result) => {
+            expect(result.body).toMatchObject({
+                    author: 'mallionaire',
+                    body: 'Loving it!',
+                    review_id: 2,
+                    comment_id: 7,
+                    votes:0,
+                    created_at: "2017-11-22T12:43:33.389Z",
+            })
+            console.log(result.body, 141)
+            });
+            });
+            });
+        test('400: when a key is null', () => {
+            const reviewId = 'z'
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(400)
+            .then(({body}) => {
+            expect(body).toEqual({msg: 'path not found!'});
+            });
+            });
+        test('201: extra keys in the request object should be ignored', () => {
+            const reviewId = 'z'
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(400)
+            .then(({body}) => {
+            expect(body).toEqual({msg: 'path not found!'});
+            });
+            });
+        test ('extra keys in the request object should be ignored', () => {
+            const comment2 = {
+                username: 'mallionaire',
+                body: 'Psych!',
+                role: 'admin'
+            };
+            const reviewId = 2
+            return request(app)
+            .post(`/api/reviews/${reviewId}/comments`)
+            .send(comment2)
+            .expect(201)
+            .then((result) => {
+            expect(result.body).toMatchObject({
+                    author: 'mallionaire',
+                    body: 'Psych!',
+                    review_id: 2,
+                    comment_id: 7,
+                    votes:0,
+                    created_at: "2017-11-22T12:43:33.389Z",
+            });
+        });
+        });
+        test('400: invalid review_id', () => {
+            const reviewId = 'z'
+            return request(app)
+            .get(`/api/reviews/${reviewId}`)
+            .expect(400)
+            .then(({body}) => {
+            expect(body).toEqual({msg: 'path not found!'});
+            });
+            });
