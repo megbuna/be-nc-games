@@ -1,6 +1,6 @@
 const db = require('../db/connection');
-exports.selectReviewId = (reviewId) => {
 
+exports.selectReviewId = (reviewId) => {
     return db
         .query("SELECT * FROM reviews WHERE review_id = $1;", [reviewId])
         .then((result) => {

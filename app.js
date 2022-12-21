@@ -4,7 +4,9 @@ const { getCategories } = require('./controllers/categories');
 const { getReviews } = require('./controllers/reviews');
 const { getReviewId } = require('./controllers/review_id');
 const { getUsers } = require('./controllers/users');
-const { postCommentsById } = require('./controllers/review-comments');
+const { getCommentsById} = require('./controllers/get-comments')
+const { postCommentsById } = require('./controllers/post-comments');
+const { updateReview } = require('./controllers/patch-reviews');
 
 const { handle404paths, handleSpecificErrors, handle500s, handleCustomErrors } = require('./error-handling');
 
@@ -18,14 +20,18 @@ app.get('/api/reviews/:review_id', getReviewId);
 
 app.get('/api/users', getUsers);
 
-app.post('/api/reviews/:review_id/comments', postCommentsById)
+app.get('/api/reviews/:review_id/comments', getCommentsById);
+
+app.post('/api/reviews/:review_id/comments', postCommentsById);
+
+app.patch('/api/reviews/:review_id', updateReview);
+
+app.all("*", handle404paths);
 
 app.use(handleCustomErrors);
 
 app.use(handleSpecificErrors);
 
 app.use(handle500s)
-
-app.all("*", handle404paths);
 
 module.exports = app;

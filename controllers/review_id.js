@@ -1,4 +1,5 @@
 const {selectReviewId} = require('../models/review_id');
+
 exports.getReviewId = (req, res, next) => {
     selectReviewId(req.params.review_id)
     .then((review) => {

@@ -1,4 +1,4 @@
-const {insertsCommentsById} = require('../models/review-comments');
+const {insertsCommentsById} = require('../models/post-comments');
 const { checkIfUserExists } = require('../models/check-user');
 
 exports.postCommentsById = (req, res, next) => {
