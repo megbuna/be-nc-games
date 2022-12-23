@@ -1,4 +1,4 @@
-const { selectCategories, selectReviews,selectReviewsById } = require("./models/review_id");
+const { selectCategories, selectReviews,selectReviewsById } = require("./models/reviews");
 
 const handle404paths = (req, res, next) => {
     res.status(404).send({ msg: 'path not found' })

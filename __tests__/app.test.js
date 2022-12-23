@@ -10,6 +10,28 @@ if (db.end) db.end();
 
 beforeEach(() => seed(testData));
 
+describe('/api for all non-existent routes in app', () => {
+    test('404: non existent path', () => {
+        return request(app)
+        .get('/not-a-route')
+        .expect(404)
+        .then(({body : {msg}}) => {
+            expect(msg).toBe("path not found");
+        })
+    })
+});
+
+describe('GET /api', () => {
+    test('200: responds with object of different endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeInstanceOf(Object)
+        })
+    })
+});
+
 describe('GET incorrect api path',()=>{
     test('404: non-existent route', ()=>{
         return request(app)
@@ -242,16 +264,16 @@ describe('POST /api/reviews/:review_id/comments',() => {
 
 describe("PATCH /api/reviews/:review_id", () => {
     test('200: responds with newly updated review', () => {
-        const review_id = 1
+        const reviewId = 1
         return request(app)
-        .patch(`/api/reviews/${review_id}`)
+        .patch(`/api/reviews/${reviewId}`)
         .send({inc_votes : 1})
         .expect(200)
         .then(({body: {review}}) => {
             const updatedReview = review
             expect(updatedReview).toEqual(
                 expect.objectContaining({
-                    review_id: review_id,
+                    review_id: reviewId,
                     title: "Agricola",
                     designer: "Uwe Rosenberg",
                     owner: "mallionaire",
@@ -265,9 +287,9 @@ describe("PATCH /api/reviews/:review_id", () => {
         });
     });
     test('200: responds with newly updated review, ignoring extra properties', () => {
-        const review_id = 1
+        const reviewId = 1
         return request(app)
-        .patch(`/api/reviews/${review_id}`)
+        .patch(`/api/reviews/${reviewId}`)
         .send({
             inc_votes: 1,
             owner: "new owner"
@@ -277,7 +299,7 @@ describe("PATCH /api/reviews/:review_id", () => {
             const updatedReview = review
             expect(updatedReview).toEqual(
                 expect.objectContaining({
-                    review_id: review_id,
+                    review_id: reviewId,
                     title: "Agricola",
                     designer: "Uwe Rosenberg",
                     owner: "mallionaire",
@@ -291,16 +313,16 @@ describe("PATCH /api/reviews/:review_id", () => {
         });
     });
     test('200: responds with newly updated review, negative inc_votes value', () => {
-        const review_id = 2
+        const reviewId = 2
         return request(app)
-        .patch(`/api/reviews/${review_id}`)
+        .patch(`/api/reviews/${reviewId}`)
         .send({inc_votes: -1})
         .expect(200)
         .then(({body: {review}}) => {
             const updatedReview = review
             expect(updatedReview).toEqual(
                 expect.objectContaining({
-                    review_id: review_id,
+                    review_id: reviewId,
                     title: 'Jenga',
                     designer: 'Leslie Scott',
                     owner: 'philippaclaire9',
@@ -351,3 +373,31 @@ describe('GET /api/users', () => {
     });
     });
 });
+
+
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: deletes comment, responds with no content", () => {
+        const comment_id = 1
+        return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(204)
+    });
+    test('status:400, returns bad request when id is not valid', () => {
+        return request(app)
+        .delete('/api/comments/example')
+        .expect(400)
+        .then(( { body } ) => {
+            expect(body.msg).toBe("bad request")
+        });
+    });
+    test("status:404, returns not found when comment id is valid but doesn't exist", () => {
+        return request(app)
+        .delete('/api/comments/999')
+        .expect(404)
+        .then(( { body } ) => {
+            expect(body.msg).toBe("Not found")
+        });
+    });
+});
+

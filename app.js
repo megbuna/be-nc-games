@@ -1,16 +1,19 @@
 const express = require('express');
 const app = express();
-const { getCategories } = require('./controllers/categories');
-const { getReviews } = require('./controllers/reviews');
-const { getReviewId } = require('./controllers/review_id');
-const { getUsers } = require('./controllers/users');
-const { getCommentsById} = require('./controllers/get-comments')
-const { postCommentsById } = require('./controllers/post-comments');
-const { updateReview } = require('./controllers/patch-reviews');
-
+const {getCategories} = require('./controllers/categories');
+const {getReviews, getReviewId, updateReview} = require('./controllers/reviews');
+const {getUsers} = require('./controllers/users');
+const {getCommentsById, postCommentsById, deleteComment} = require('./controllers/comments')
+const {getEndpoints} = require("./endpoints");
 const { handle404paths, handleSpecificErrors, handle500s, handleCustomErrors } = require('./error-handling');
 
 app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send("YOU'VE MADE IT TO MICHAEL'S GAMES API!")
+});
+
+app.get('/api', getEndpoints);
 
 app.get('/api/categories', getCategories);
 
@@ -25,6 +28,8 @@ app.get('/api/reviews/:review_id/comments', getCommentsById);
 app.post('/api/reviews/:review_id/comments', postCommentsById);
 
 app.patch('/api/reviews/:review_id', updateReview);
+
+app.delete('/api/comments/:comment_id', deleteComment);
 
 app.all("*", handle404paths);
 
