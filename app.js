@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const {getCategories} = require('./controllers/categories');
@@ -7,10 +8,12 @@ const {getCommentsById, postCommentsById, deleteComment} = require('./controller
 const {getEndpoints} = require("./endpoints");
 const { handle404paths, handleSpecificErrors, handle500s, handleCustomErrors } = require('./error-handling');
 
+app.use(cors());
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send("YOU'VE MADE IT TO MICHAEL'S GAMES API!")
+    res.send("Welcome - You've made it to Michael's Games!")
 });
 
 app.get('/api', getEndpoints);
